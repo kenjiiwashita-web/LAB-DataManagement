@@ -1,0 +1,18 @@
+config {
+  type: "view",
+  schema: "LAB_DataManagementAI",
+  name: "L1_ORDER_ITEMS_TEST",
+  description: "注文明細データの数値補完と異常値フラグ付与"
+}
+
+SELECT
+  item_id,
+  order_id,
+  product_id,
+  quantity,
+  unit_price,
+  -- discount_rateの補完
+  COALESCE(discount_rate, 0.0) AS discount_rate,
+  -- 異常値フラグ
+  (unit_price < 0 OR quantity < 1) AS is_invalid_numerical
+FROM ${ref("ORDER_ITEMS_TEST")}

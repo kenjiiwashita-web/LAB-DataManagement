@@ -1,0 +1,42 @@
+config {
+  type: "test",
+  dataset: "L1_CUSTOMERS_TEST"
+}
+
+input "CUSTOMERS_TEST" {
+  SELECT
+    1 AS customer_id,
+    "  佐藤   花子  " AS customer_name,
+    "customer_1@example.jp" AS email,
+    "070 8835 7909" AS phone,
+    "BRONZE" AS membership_rank,
+    "20231027" AS registration_date,
+    "神奈川県" AS prefecture
+  UNION ALL
+  SELECT
+    2 AS customer_id,
+    "鈴木 一郎" AS customer_name,
+    "invalid-email-address" AS email,
+    "090-1234-5678" AS phone,
+    "ゴールド" AS membership_rank,
+    "2023/10/28" AS registration_date,
+    "東京都" AS prefecture
+}
+
+SELECT
+  1 AS customer_id,
+  "佐藤 花子" AS customer_name,
+  "customer_1@example.jp" AS email,
+  "07088357909" AS phone,
+  "bronze" AS membership_rank,
+  CAST("2023-10-27" AS DATE) AS registration_date,
+  "神奈川県" AS prefecture
+UNION ALL
+SELECT
+  2 AS customer_id,
+  "鈴木 一郎" AS customer_name,
+  CAST(NULL AS STRING) AS email,
+  "09012345678" AS phone,
+  "gold" AS membership_rank,
+  CAST("2023-10-28" AS DATE) AS registration_date,
+  "東京都" AS prefecture

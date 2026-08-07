@@ -1,0 +1,3 @@
+defaultProject: "ut-crm-automl"
+defaultDataset: "LAB_DataManagementAI"
+defaultLocation: "asia-northeast1" # またはご自身のリージョン

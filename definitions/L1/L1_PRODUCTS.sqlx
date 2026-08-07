@@ -1,0 +1,21 @@
+config {
+  type: "view",
+  schema: "LAB_DataManagementAI",
+  name: "L1_PRODUCTS_TEST",
+  description: "商品データのカテゴリ名寄せ処理"
+}
+
+SELECT
+  * EXCEPT(unit_price, category),
+  -- 価格のマイナス補正とNULL補完
+  COALESCE(ABS(unit_price), 0) AS unit_price,
+  -- カテゴリの名寄せ
+  CASE
+    WHEN category IN ('Food', '食品', '食料品') THEN '食品'
+    WHEN category IN ('Electronics', '家電', '電化製品') THEN '家電'
+    WHEN category IN ('Apparel', 'ファッション', '衣類') THEN '衣料品'
+    WHEN category IN ('Books', '書籍', '本') THEN '書籍'
+    WHEN category IN ('Daily goods', '日用品', '雑貨') THEN '日用品・雑貨'
+    ELSE category
+  END AS category
+FROM ${ref("PRODUCTS_TEST")}

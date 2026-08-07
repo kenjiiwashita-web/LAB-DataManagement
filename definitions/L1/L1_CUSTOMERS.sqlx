@@ -1,0 +1,42 @@
+config {
+  type: "view",
+  schema: "LAB_DataManagementAI",
+  name: "L1_CUSTOMERS_TEST",
+  description: "顧客データのクレンジング処理"
+}
+
+SELECT
+  customer_id,
+  -- 1. customer_name: 姓名間のスペースを半角1つに統一し、前後の空白を削除
+  TRIM(REGEXP_REPLACE(customer_name, r'[ \s　]+', ' ')) AS customer_name,
+
+  -- 2. email: 正しい形式のみを残し、不正なものはNULL
+  IF(
+    REGEXP_CONTAINS(
+      email,
+      r'^[a-zA-Z0-9.!#$%&\'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$'),
+    email,
+    NULL)
+    AS email,
+
+  -- 3. phone: 数字のみに統一
+  REGEXP_REPLACE(phone, r'[- ]', '') AS phone,
+
+  -- 4. membership_rank: 表記揺れを英小文字に統一
+  LOWER(
+    CASE
+      WHEN membership_rank IN ('BRONZE', 'bronze', 'ブロンズ') THEN 'bronze'
+      WHEN membership_rank IN ('SILVER', 'silver', 'シルバー') THEN 'silver'
+      WHEN membership_rank IN ('GOLD', 'gold', 'ゴールド') THEN 'gold'
+      ELSE membership_rank
+      END)
+    AS membership_rank,
+
+  -- 5. registration_date: DATE型に変換
+  COALESCE(
+    SAFE.PARSE_DATE('%Y-%m-%d', registration_date),
+    SAFE.PARSE_DATE('%Y/%m/%d', registration_date),
+    SAFE.PARSE_DATE('%Y%m%d', registration_date))
+    AS registration_date,
+  prefecture
+FROM ${ref("CUSTOMERS_TEST")}

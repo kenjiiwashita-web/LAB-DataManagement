@@ -1,0 +1,66 @@
+config {
+  type: "table",
+  schema: "LAB_DataManagementAI",
+  name: "MART_MONTHLY_SALES",
+  description: "月次顧客・カテゴリ別売上集計マート"
+}
+
+-- 1. 注文明細データの準備と売上の事前計算
+WITH order_items_prepared AS (
+  SELECT
+    order_id,
+    product_id,
+    (IFNULL(unit_price, 0) * IFNULL(quantity, 0) * (1 - IFNULL(discount_rate, 0))) AS calc_sales
+  FROM
+    ${ref("L1_ORDER_ITEMS_TEST")}
+),
+
+-- 2. 注文親データと結合し、注文年月と顧客IDを紐付け
+orders_with_date AS (
+  SELECT
+    o.order_id,
+    o.customer_id,
+    FORMAT_DATE("%Y-%m", o.order_date) AS year_month,
+    oi.product_id,
+    oi.calc_sales
+  FROM
+    ${ref("L1_ORDERS_TEST")} AS o
+  INNER JOIN
+    order_items_prepared AS oi ON o.order_id = oi.order_id
+),
+
+-- 3. 商品マスターを結合してカテゴリ情報を取得
+sales_with_product_info AS (
+  SELECT
+    owd.*,
+    p.category
+  FROM
+    orders_with_date AS owd
+  INNER JOIN
+    ${ref("L1_PRODUCTS_TEST")} AS p ON owd.product_id = p.product_id
+),
+
+-- 4. 顧客マスターを結合して顧客名を取得
+sales_with_customer_info AS (
+  SELECT
+    swp.*,
+    c.customer_name
+  FROM
+    sales_with_product_info AS swp
+  INNER JOIN
+    ${ref("L1_CUSTOMERS_TEST")} AS c ON swp.customer_id = c.customer_id
+)
+
+-- 5. 最終的な集計
+SELECT
+  year_month,
+  customer_name,
+  category,
+  SUM(calc_sales) AS total_sales
+FROM
+  sales_with_customer_info
+GROUP BY
+  1, 2, 3
+ORDER BY
+  year_month DESC,
+  total_sales DESC
