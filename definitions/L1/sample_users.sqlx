@@ -1,0 +1,8 @@
+config {
+  type: "view",
+  description: "AI検証用のダミーテーブルです"
+}
+
+SELECT 1 AS user_id, 'Alice' AS user_name
+UNION ALL
+SELECT 2 AS user_id, 'Bob' AS user_name
