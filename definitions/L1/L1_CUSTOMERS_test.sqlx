@@ -2,7 +2,7 @@ config {
   type: "test",
   dataset: "L1_CUSTOMERS_TEST"
 }
-
+-- test用コメント追加
 input "CUSTOMERS_TEST" {
   SELECT
     1 AS customer_id,
