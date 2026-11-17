@@ -2,7 +2,8 @@ config {
   type: "view",
   schema: "LAB_DataManagementAI",
   name: "L1_CUSTOMERS_TEST",
-  description: "顧客データのクレンジング処理"
+  description: "顧客データのクレンジング処理",
+  tags: ["tue_table"]
 }
 
 SELECT

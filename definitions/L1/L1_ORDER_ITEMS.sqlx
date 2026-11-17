@@ -2,7 +2,8 @@ config {
   type: "view",
   schema: "LAB_DataManagementAI",
   name: "L1_ORDER_ITEMS_TEST",
-  description: "注文明細データの数値補完と異常値フラグ付与"
+  description: "注文明細データの数値補完と異常値フラグ付与",
+  tags: ["daily_table"]
 }
 
 SELECT

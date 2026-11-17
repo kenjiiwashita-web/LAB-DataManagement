@@ -2,7 +2,8 @@ config {
   type: "table",
   schema: "LAB_DataManagementAI",
   name: "MART_MONTHLY_SALES",
-  description: "月次顧客・カテゴリ別売上集計マート"
+  description: "月次顧客・カテゴリ別売上集計マート",
+  tags: ["daily_table"]
 }
 
 -- 1. 注文明細データの準備と売上の事前計算
