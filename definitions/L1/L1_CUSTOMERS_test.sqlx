@@ -4,6 +4,7 @@ config {
 }
 -- test用コメント追加２
 -- test
+-- test
 input "CUSTOMERS_TEST" {
   SELECT
     1 AS customer_id,
